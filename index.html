@@ -9,9 +9,7 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-  </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
     integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
   </script>
@@ -24,7 +22,32 @@
 
     function OnResize() {
       document.getElementById('bg').style.backgroundImage =
-        `url("https://picsum.photos/${window.innerWidth}/${window.innerHeight}/?blur=5")`;
+        `url("https://picsum.photos/${window.innerWidth}/${window.innerHeight}/?blur=2")`;
+      RegisterEventListeners();
+    }
+
+    function RegisterEventListeners() {
+      document.getElementById("txtSearch").addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+          $.ajax({
+            type: "POST",
+            url: "https://www.abibliadigital.com.br/api/verses/search",
+            data: `{"version": "nvi", "search": "${document.getElementById("txtSearch").value.replace(/(\r\n|\n|\r)/gm, "")}" }`,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+              alert(result.d);
+              console.log(result);
+
+              if (result.occurrence <= 0)
+              {
+
+              }
+            }
+          });
+
+        }
+      });
     }
 
     window.OnResize = OnResize;
@@ -34,6 +57,17 @@
       display: block;
       z-index: 5;
       position: relative;
+    }
+
+    .container {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100vw;
+      right: 0;
+      max-width: 100vw;
+      background-color: rgba(41, 41, 41, 0.445);
+      backdrop-filter: blur(5px);
     }
   </style>
 
@@ -46,20 +80,21 @@
       <div class="front">
         <h2 style="padding-left: 5%; padding-top: 5%;">Hello, what do you need guidance for today?</h2>
 
-        <input style="width:80%; margin-left: 10%;" type="text" placeholder="Enter your question here.">
+        <textarea
+          style="resize: none; border-radius: 20px; height: 30%; width:80%; margin-top: 10px; margin-left: 10%; font-size: 25px;"
+          rows="5" id="txtSearch" placeholder="Enter your question here."></textarea>
 
-        <footer class="footer">
-          <div class="container">
-            <span class="text-muted">This project made possible by <a href="https://bibleapi.co/en">Albiblia
-                Digital</a>.</span>
-          </div>
-        </footer>
+        <div id="response">
+          
+        </div>
       </div>
     </div>
   </main>
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 
+  <div class="container">
+    <span class="text-white">This project made possible by <a href="https://bibleapi.co/en">Albiblia
+        Digital</a>.</span>
+  </div>
 </body>
 
 </html>
